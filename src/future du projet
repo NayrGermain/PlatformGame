@@ -1,0 +1,24 @@
+A Faire entierement :
+
+-Mettre une selection de niveau
+-Implémenter un système de quète journalière/hebdomadaire
+-Implémenter un système de niveau
+-Faire un systeme de boutique avec les pièces récoltés dans le jeux
+
+A compléter :
+
+-Rajouter une page d'accueil de style géometry dash
+-Personnaliser le décors/ environnement/personnage en fonction du niveau
+
+Réalisé :
+
+-Finir les différents Bonus
+-Stocker les pieces dans un fichier a part et aussi le max Highscore
+    {
+    Lorsque le jeu est terminer (Terrain::finished)
+    ->On récuperes dans une variable l'entier correspondant au nb de pieces totales.
+    ->On additionne cet entier avec les pièces récupérés lors du jeu
+    ->On push dans le fichier data le nouveau nombre de piece
+
+    ---> On va alors faire une classe ReaderAndWriter qui va se résumer en un simple constructeur qui appelera une méthode ou pas
+}
