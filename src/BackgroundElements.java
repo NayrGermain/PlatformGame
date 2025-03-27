@@ -20,9 +20,9 @@ public class BackgroundElements {
     Random random = new Random(); // Création d'une instance de Random
     public BackgroundElements(){
         try {
-            listeImages.add(ImageIO.read( new File("arbre1.png") ));
-            listeImages.add(ImageIO.read( new File("arbre2.png") ));
-            listeImages.add(ImageIO.read( new File("buisson1.png") ));
+            listeImages.add(ImageIO.read( new File("images/arbre1.png") ));
+            listeImages.add(ImageIO.read( new File("images/arbre2.png") ));
+            listeImages.add(ImageIO.read( new File("images/buisson1.png") ));
         }catch(IOException exc){
             exc.printStackTrace();
         }

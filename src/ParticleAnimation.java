@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ParticleAnimation {
-
     private ArrayList<Particle> particles;
     private Random random;
 
@@ -12,31 +11,34 @@ public class ParticleAnimation {
         random = new Random();
     }
 
-    public void jumpAnimation(Graphics g, int characterX, int characterY) {
-        // Nombre de particules à créer
-        int particleCount = 20;
+    public void updateAndDraw(Graphics g) {
+        // Mise à jour et dessin de toutes les particules existantes
+        for (int i = particles.size() - 1; i >= 0; i--) {
+            Particle p = particles.get(i);
+            p.update();
+            p.draw(g);
 
-        // Création des particules
+            // Suppression si hors écran
+            if (p.getX() < 0 || p.getX() > g.getClipBounds().width ||
+                    p.getY() < 0 || p.getY() > g.getClipBounds().height) {
+                particles.remove(i);
+            }
+        }
+    }
+
+    public void triggerJumpAnimation(int characterX, int characterY) {
+        // Création de nouvelles particules
+        int particleCount = 20;
         for (int i = 0; i < particleCount; i++) {
-            int size = random.nextInt(6) + 5; // Taille aléatoire entre 5 et 10 pixels
-            int xPos = characterX + random.nextInt(30) - 15; // Position aléatoire dans une plage de 30 pixels autour du personnage en X
-            int yPos = characterY + random.nextInt(30) - 15; // Position aléatoire dans une plage de 30 pixels autour du personnage en Y
-            int xSpeed = random.nextInt(5) - 2; // Vitesse horizontale aléatoire entre -2 et 2 pixels par frame
-            int ySpeed = random.nextInt(5) - 2; // Vitesse verticale aléatoire entre -2 et 2 pixels par frame
-            Color color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)); // Couleur aléatoire
+            int size = random.nextInt(6) + 5;
+            int xPos = characterX + random.nextInt(30) - 15;
+            int yPos = characterY + random.nextInt(30) - 15;
+            int xSpeed = random.nextInt(5) - 2;
+            int ySpeed = random.nextInt(5) - 2;
+            Color color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 
             particles.add(new Particle(xPos, yPos, size, xSpeed, ySpeed, color));
         }
-
-        // Dessin des particules
-        for (Particle particle : particles) {
-            particle.update();
-            particle.draw(g);
-        }
-
-        // Suppression des particules hors de l'écran
-        particles.removeIf(particle -> particle.getX() < 0 || particle.getX() > g.getClipBounds().width ||
-                particle.getY() < 0 || particle.getY() > g.getClipBounds().height);
     }
 
     public class Particle {

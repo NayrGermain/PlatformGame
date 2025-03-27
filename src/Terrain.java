@@ -1,3 +1,7 @@
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -6,6 +10,8 @@ public class Terrain {
     private ArrayList<Obstacle> listeObstacle;
     private ArrayList<Piece> listePiece;
     private Bonus bonus = null;
+    private ArrayList<Image> obstacleSprite = new ArrayList<>();
+
     private boolean willRestart;
     static int bonusPiece = 0;
     static long score;
@@ -18,6 +24,15 @@ public class Terrain {
         resetScore();
         bonusPiece = 0;
         willRestart = true;
+        try {
+            Image explode = ImageIO.read(new File("images/EXPLODE.png"));
+            Image slime =  ImageIO.read(new File("images/slime.png"));
+            Image ghost =  ImageIO.read(new File("images/ghost.png"));
+            obstacleSprite.add(explode);
+            obstacleSprite.add(slime);
+            obstacleSprite.add(ghost);
+
+        }catch(IOException exc){exc.printStackTrace();}
     }
     public boolean finished(){
         if(!joueur.enVie()){
@@ -32,14 +47,16 @@ public class Terrain {
     public void willRestartSoon(){willRestart = false;}
     public void tour(){
 
-        if(popObstacle()){
-            pushObstacle();
-        }
-
+        popObstacle();
+        pushObstacle();
         moveAll();
         //System.out.println(joueur.getPosx());
         joueur.fall();
-        joueur.checkGround();
+
+        if(joueur.checkGround())
+        {
+            collideWithGround = true;
+        }
 
         joueur.checkWall();
         checkCollide();
@@ -57,8 +74,9 @@ public class Terrain {
         double x,y;
         for(int i = 0; i < 360 ; i++){
             double theta = i * Math.PI / 180.0; // conversion degrés à radians
-            x = getPosXJoueur() + Personnage.rayon * Math.cos(theta);
-            y = getPosYJoueur() + Personnage.rayon * Math.sin(theta);
+            double rayon = Personnage.rayon / 2.0;
+            x = getPosXJoueur() + rayon + rayon * Math.cos(theta);
+            y = getPosYJoueur() + rayon + rayon * Math.sin(theta);
             if(obstacleVisible()) {
                 Obstacle collide = checkCollideBis(x,y);
                 if (collide!=null) {
@@ -158,11 +176,23 @@ public class Terrain {
 
         }return false;
     }
-    public void pushObstacle(){
-        if((  Terrain.score > 1500 && birdsNotExisting()))
-            listeObstacle.add(new Obstacle(1));
-        listeObstacle.add(new Obstacle());
+    public void pushObstacle() {
+        int maxBirds = (int)(score / 1500);
+        int maxNormal = maxBirds + 1;
+        int currentBirds = 0;
+        int currentNormal = 0;
+        for (Obstacle o : listeObstacle) {
+            if (o.getT() == 1) currentBirds++;
+            else if (o.getT() == 0) currentNormal++;
+        }
 
+        int n =((int)((Math.random()+1) * 1000));
+        if(Terrain.score > 1500 && currentBirds < maxBirds && n < 1200) {
+            listeObstacle.add(new Obstacle(1));
+        }
+        else if (Terrain.score > 500 && currentNormal < maxNormal && n< 1050) {
+            listeObstacle.add(new Obstacle(0, getRandomEnnemiesSprite()));
+        }
     }
     public void pushThunder(){
         if((Terrain.score + 1) > 3000 && (Terrain.score % 1000 <= 2) )
@@ -258,5 +288,11 @@ public class Terrain {
         for(int i = 0; i < n ; i++){
             listePiece.add(new Piece(i*dx,-1*(by + i*dy)));
         }return;
+    }
+
+    public Image getRandomEnnemiesSprite()
+    {
+        int n = (int)(Math.random() * 3);
+        return obstacleSprite.get(n);
     }
 }

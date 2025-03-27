@@ -15,6 +15,12 @@ public class Fen extends JPanel implements KeyListener {
     private BackgroundElements backgroundElements;
     private ParticleAnimation particleAnimation;
     Image bg;
+    Image spike;
+    Image skull;
+    Image explode;
+    Image slime;
+    Image ghost;
+    ArrayList<Image> ennemies;
     private int height = 600, width = 1200;
     private boolean mainMenu = true;
     private boolean market = false;
@@ -32,9 +38,11 @@ public class Fen extends JPanel implements KeyListener {
                 " Nombre de Piece : " + Terrain.bonusPiece);
         this.scoreLabel = label;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        ennemies = new ArrayList<>();
         try {
-            bg = ImageIO.read(new File("backgroundCool.png"));
+            bg = ImageIO.read(new File("images/backgroundCool.png"));
+            spike = ImageIO.read(new File("images/spike.png"));
+            skull = ImageIO.read(new File("images/skull.png"));
 
         }catch(IOException exc){exc.printStackTrace();}
 
@@ -165,10 +173,13 @@ public class Fen extends JPanel implements KeyListener {
                 if (t.obstacleVisible()) {
                     for (Obstacle o : t.getVisibleObstacle()) {
                         switch (o.getT()) {
-                            case 0, 1 -> {
-                                g.setColor(new Color(100,160,225));
-                                g.fillRect(o.getPosx(), o.getPosy() - 20, Obstacle.width, Obstacle.taille);
 
+                            case 1 -> { g.drawImage(skull, o.getPosx(), o.getPosy(), this);}
+                            case 0 ->
+                            {
+                                g.setColor(new Color(100,160,225));
+                             //   g.fillRect(o.getPosx(), o.getPosy() - 20, Obstacle.width, Obstacle.taille);
+                                g.drawImage(o.getImage(), o.getPosx(), o.getPosy()-20, this);
                             }
                             case 2 -> {
                                 if (o.getPosy() <= 1000) {
@@ -199,10 +210,14 @@ public class Fen extends JPanel implements KeyListener {
                     }
                 }
                 //backgroundElements.draw(g);
-                //if(t.collideWithGround){
-                //    particleAnimation.jumpAnimation(g, t.getPosXJoueur()+Personnage.rayon/2, t.getPosYJoueur());
-                //    t.collideWithGround = false;
-                //}
+                /**particleAnimation.updateAndDraw(g); // À appeler à chaque frame
+
+                // Quand le personnage touche le sol
+                if (t.collideWithGround) {
+                    System.out.println("je touche le sol");
+                    particleAnimation.triggerJumpAnimation(t.getPosXJoueur()+Personnage.rayon/2, t.getPosYJoueur()+100);
+                    t.collideWithGround = false;
+                }**/
 
                 scoreLabel.setForeground(new Color(255, 255, 255));
                 scoreLabel.setText("Score : " + Long.toString(Terrain.score) + " Nombre de Piece : " + Terrain.bonusPiece);
